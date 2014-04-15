@@ -66,10 +66,7 @@ describe 'CommunicartsController' do
 
     it "invokes two email messages based on approval group" do
 
-      FactoryGirl.create(:approval_group)
       FactoryGirl.create(:approval_group_with_approvers)
-
-
 
       params = {
         cartNumber: "2867637",
