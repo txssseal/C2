@@ -20,6 +20,7 @@ class Cart < ActiveRecord::Base
       cart = Cart.new(name: name, status: 'pending', external_id: params['cartNumber'])
     else 
       cart = currentCart
+      cart.cart_items.clear
     end
 
     if !approval_group_name.blank?
@@ -46,7 +47,7 @@ class Cart < ActiveRecord::Base
         :details => cart_item_params['details'],
         :part_number => cart_item_params['partNumber'],
         :price => cart_item_params['price'],
-        :cart_id => cart_item_params['features']
+        :cart_id => cart.id
       )
     end
   end
