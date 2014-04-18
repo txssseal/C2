@@ -14,7 +14,6 @@ class Cart < ActiveRecord::Base
     approval_group_name = params['approvalGroup']
 
     name = !params['cartName'].blank? ? params['cartName'] : params['cartNumber']
-    binding.pry
 
     currentCart =  Cart.find_by(:name => name)
     if currentCart.blank?

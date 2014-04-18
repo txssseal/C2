@@ -21,9 +21,7 @@ class CommunicartsController < ApplicationController
 
   def approval_reply_received
     cart = Cart.find_by(external_id: (params['cartNumber'].to_i))
-    binding.pry
     approver = cart.approval_group.approvers.where(email_address: params['fromAddress']).first
-    binding.pry
     approver.update_attributes(status: approve_or_disapprove_status)
     cart.update_approval_status
 
