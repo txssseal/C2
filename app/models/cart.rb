@@ -12,8 +12,16 @@ class Cart < ActiveRecord::Base
 
   def self.initialize_cart_with_items(params)
     approval_group_name = params['approvalGroup']
+
     name = !params['cartName'].blank? ? params['cartName'] : params['cartNumber']
-    cart = Cart.new(name: name, status: 'pending', external_id: params['cartNumber'])
+    binding.pry
+
+    currentCart =  Cart.find_by(:name => name)
+    if currentCart.blank?
+      cart = Cart.new(name: name, status: 'pending', external_id: params['cartNumber'])
+    else 
+      cart = currentCart
+    end
 
     if !approval_group_name.blank?
       cart.approval_group = ApprovalGroup.find_by_name(params['approvalGroup'])
