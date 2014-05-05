@@ -34,10 +34,10 @@ class CommunicartsController < ApplicationController
     cart = Cart.find_by(external_id: (params['cartNumber'].to_i))
     cart.decorate
 
-    Comment.create(comment_text: params['comment'].strip,cart_id: cart.id) unless params['comment'].blank?
+    Comment.create(comment_text: params['comment'].strip, cart_id: cart.id) unless params['comment'].blank?
 
     approver = cart.approval_group.approvers.where(email_address: params['fromAddress']).first
-    approver.update_attributes(status: approve_or_disapprove_status)
+    approver.update_attributes(status: approve_or_reject_status)
     cart.update_approval_status
 
     cart_report = EmailStatusReport.new(cart)
@@ -45,8 +45,9 @@ class CommunicartsController < ApplicationController
     render json: { message: "approval_reply_received"}, status: 200
   end
 
-  def approve_or_disapprove_status
+  def approve_or_reject_status
     #TODO: Refactor duplication with ComunicartMailer#approval_reply_received_email
-    params["approve"] == "APPROVE" ? "approved" : "disapproved"
+    return 'approved' if params["approve"] == "APPROVE"
+    return 'rejected' if params["disapprove"] == "REJECT"
   end
 end
