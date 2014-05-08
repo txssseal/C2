@@ -3,6 +3,7 @@ require 'csv'
 class Cart < ActiveRecord::Base
   has_many :cart_items
   has_many :comments
+  has_many :approvals
   has_one :approval_group
 
   def update_approval_status

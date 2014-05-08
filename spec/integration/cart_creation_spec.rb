@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe 'Creating a cart' do
   before do
-    approval_group_1 = ApprovalGroup.create(name: "firstApprovalGroup")
+    approval_group_1 = FactoryGirl.create(:approval_group_with_approvers, name: "firstApprovalGroup")
+    # approval_group_1 = ApprovalGroup.create(name: "firstApprovalGroup")
     approval_group_2 = ApprovalGroup.create(name: "secondApprovalGroup")
   end
 
@@ -109,7 +110,8 @@ describe 'Creating a cart' do
     expect(cart.cart_items.count).to eq 1
     expect(cart.cart_items[0].price).to eq 9.87
     expect(cart.approval_group.name).to eq "secondApprovalGroup"
-    expect(cart.comments.first.comment_text).to eq "Hi, this is a comment, I hope it works!\r\nThis is the second line of the comment." 
+    expect(cart.comments.first.comment_text).to eq "Hi, this is a comment, I hope it works!\r\nThis is the second line of the comment."
+    expect(cart.approvals.count).to eq 2
   end
 
   it 'handles non-existent approval groups'
