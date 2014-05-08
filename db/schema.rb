@@ -20,18 +20,16 @@ ActiveRecord::Schema.define(version: 20140508030640) do
     t.integer  "cart_id"
   end
 
-<<<<<<< HEAD
   create_table "approver_comments", force: true do |t|
     t.text     "comment_text"
     t.integer  "approver_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-=======
+
   create_table "approval_groups_users", id: false, force: true do |t|
-    t.integer "approval_group_id", null: false
-    t.integer "users_id",          null: false
+    t.integer "approval_group_id"
+    t.integer "user_id"
   end
->>>>>>> Added approval_groups_users join table
 
   create_table "approvals", force: true do |t|
     t.integer  "cart_id"

@@ -25,9 +25,7 @@ describe 'Approving a cart with multiple approvers' do
     @json_approval_params = JSON.parse(approval_params)
 
     approval_group = ApprovalGroup.create(name: "A Testworthy Approval Group")
-    approval_group.approvers << Approver.create(email_address: "approver1@some-dot-gov.gov")
-    approval_group.approvers << Approver.create(email_address: "approver2@some-dot-gov.gov")
-    approval_group.approvers << Approver.create(email_address: "approver3@some-dot-gov.gov")
+
     approval_group.requester = Requester.create(email_address: 'test-requestser@some-dot-gov.gov')
 
     cart = Cart.new(
@@ -38,6 +36,17 @@ describe 'Approving a cart with multiple approvers' do
 
     cart.approval_group = approval_group
     cart.cart_items << FactoryGirl.create(:cart_item)
+
+    (1..3).each do |num|
+      email = "approver#{num}@some-dot-gov.gov"
+
+      #TODO: Remove approvers
+      approval_group.approvers << Approver.create(email_address: email)
+      user = FactoryGirl.create(:user, email_address: email)
+      approval_group.users << user
+      cart.approvals << Approval.create!(user_id: user.id)
+    end
+
     cart.save
 
   end
@@ -54,24 +63,20 @@ describe 'Approving a cart with multiple approvers' do
     post 'approval_reply_received', @json_approval_params
 
     expect(Cart.first.approval_group.approvers.count).to eq 3
-    expect(Cart.first.approval_group.approvers.where(status: 'approved').count).to eq 1
-    expect(Cart.first.approval_group.approvers.first.approver_comments.count).to eq 1
+    expect(Cart.first.approvals.where(status: 'approved').count).to eq 1
 
     @json_approval_params["fromAddress"] = "approver2@some-dot-gov.gov"
     post 'approval_reply_received', @json_approval_params
 
     expect(Cart.first.approval_group.approvers.count).to eq 3
-    expect(Cart.first.approval_group.approvers.where(status: 'approved').count).to eq 2
+    expect(Cart.first.approvals.where(status: 'approved').count).to eq 2
 
     @json_approval_params["fromAddress"] = "approver3@some-dot-gov.gov"
     post 'approval_reply_received', @json_approval_params
 
     expect(Cart.first.approval_group.approvers.count).to eq 3
-    expect(Cart.first.approval_group.approvers.where(status: 'approved').count).to eq 3
-    expect(Cart.first.approval_group.approvers.first.approver_comments.first.comment_text).to eq "spudcomment"
-    expect(Cart.first.approval_group.approvers[0].approver_comments.count).to eq 1
-    expect(Cart.first.approval_group.approvers[1].approver_comments.count).to eq 1
-    expect(Cart.first.approval_group.approvers[2].approver_comments.count).to eq 1
+    expect(Cart.first.approvals.where(status: 'approved').count).to eq 3
+    expect(Cart.first.comments.first.comment_text).to eq "spudcomment"
     expect(ApproverComment.count).to eq 3
 
   end
