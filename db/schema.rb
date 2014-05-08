@@ -11,13 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140506204115) do
+ActiveRecord::Schema.define(version: 20140508030640) do
 
   create_table "approval_groups", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "cart_id"
+  end
+
+  create_table "approval_groups_users", id: false, force: true do |t|
+    t.integer "approval_group_id", null: false
+    t.integer "users_id",          null: false
   end
 
   create_table "approvals", force: true do |t|
