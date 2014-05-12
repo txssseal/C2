@@ -72,10 +72,7 @@ class Cart < ActiveRecord::Base
         cart.approval_group = ApprovalGroup.find_by_name(params['approvalGroup'])
       else
         cart.approval_group = ApprovalGroup.create(
-                                name: "approval-group-#{params['cartNumber']}",
-                                approvers_attributes: [
-                                  { email_address: params['fromAddress'] }
-                                ]
+                                name: "approval-group-#{params['cartNumber']}"
                               )
       end
 
