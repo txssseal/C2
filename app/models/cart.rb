@@ -52,8 +52,8 @@ class Cart < ActiveRecord::Base
   def create_approvals_csv
     csv_string = CSV.generate do |csv|
     csv << ["status","approver","created_at"]
-    approval_group.approvers.each do |app|
-        csv << [app.status,app.email_address,app.updated_at]
+    approvals.each do |approval|
+        csv << [approval.status, approval.user.email_address,approval.updated_at]
         end
     end
     return csv_string
