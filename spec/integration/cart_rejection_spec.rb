@@ -70,7 +70,15 @@ describe 'Rejecting a cart with multiple approvers' do
     expect(cart.approvals.where(status: 'rejected').count).to eq 1
     expect(cart.reload.status).to eq 'rejected'
 
-    #User corrects the mistake
+    #-- A cart with an approval group
+    # A mailer sends out with the current state of things (rejected) to the requester
+    # A mailer sends out an update to the approvers
+    # User corrects the mistake and resubmits
+    # Cart with the same external ID should be associated with a new set of users with approvals in status 'pending'
+    # A new set of emails is sent to everyone on the list
+    # If they respond to a previous one, they get an email that it has expired and to respond to 'this one'
+    # Start the web interface that allows people to just do everything in a web page experience
+
 
   end
 end

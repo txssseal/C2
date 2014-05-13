@@ -57,6 +57,7 @@ describe CommunicartsController do
 
   let(:approval_group) { FactoryGirl.create(:approval_group_with_approvers, name: "anotherApprovalGroupName") }
   let(:approval) { FactoryGirl.create(:approval) }
+  let(:approval_list) { [approval] }
 
   describe 'POST send_cart' do
     before do
@@ -133,10 +134,28 @@ describe CommunicartsController do
       "disapprove": null
       }'
     }
+
+    let(:rejection_params) {
+      '{
+      "cartNumber": "246810",
+      "category": "approvalreply",
+      "attention": "",
+      "fromAddress": "judy.jetson@spacelysprockets.com",
+      "gsaUserName": "",
+      "gsaUsername": null,
+      "date": "Sun, 13 Apr 2014 18:06:15 -0400",
+      "approve": "",
+      "disapprove": "REJECT"
+      }'
+    }
+
     #TODO: Replace approve/disapprove with generic action
 
-
     before do
+      User.stub(:find_by).and_return(approver)
+      cart.stub_chain(:approvals, :where).and_return(approval_list)
+      Cart.should_receive(:find_by).with({:external_id=>246810}).and_return(cart)
+
       # Remove stub to view email layout in development through letter_opener
       CommunicartMailer.stub_chain(:approval_reply_received_email, :deliver)
       EmailStatusReport.stub(:new)
@@ -144,20 +163,12 @@ describe CommunicartsController do
     end
 
     it 'finds the cart'  do
-      User.stub(:find_by).and_return(approver)
-      cart.stub_chain(:approvals, :where).and_return([approval])
-
       cart.stub(:update_approval_status)
-      Cart.should_receive(:find_by).with({:external_id=>246810}).and_return(cart)
       post 'approval_reply_received', @json_approval_params
     end
 
     it 'invokes a mailer' do
-      User.stub(:find_by).and_return(approver)
-      cart.stub_chain(:approvals, :where).and_return([approval])
       cart.stub(:update_approval_status)
-
-      Cart.should_receive(:find_by).and_return(cart)
       mock_mailer = double
 
       CommunicartMailer.should_receive(:approval_reply_received_email).and_return(mock_mailer)
@@ -166,19 +177,11 @@ describe CommunicartsController do
     end
 
     it 'updates the cart status' do
-      User.stub(:find_by).and_return(approver)
-      cart.stub_chain(:approvals, :where).and_return([approval])
-
-      Cart.stub(:find_by).and_return(cart)
       cart.should_receive(:update_approval_status)
       post 'approval_reply_received', @json_approval_params
     end
 
     it 'updates the approval status' do
-      Cart.stub(:find_by).and_return(cart)
-      User.stub(:find_by).and_return(approver)
-      approval_list = [approval]
-      cart.stub_chain(:approvals, :where).and_return(approval_list)
       approval_list.stub(:count)
       cart.stub_chain(:approvals, :count)
       cart.stub(:update_approval_status)
@@ -186,6 +189,21 @@ describe CommunicartsController do
 
       approval.should_receive(:update_attributes).with(status: 'approved')
       post 'approval_reply_received', @json_approval_params
+    end
+
+    context 'A cart is rejected' do
+
+      it 'sets the cart to rejected status' do
+        approval.should_receive(:update_attributes).with({status: 'rejected'})
+        post 'approval_reply_received', @json_approval_params
+      end
+
+      it 'sends out a rejection status email to the requester'
+
+      it 'sends out a reject status email to the approvers'
+
+      it 'creates another set of approvals when another cart request for that same cart is intiiated'
+
     end
 
   end

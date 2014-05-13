@@ -49,6 +49,15 @@ class CommunicartsController < ApplicationController
     cart_report = EmailStatusReport.new(cart)
     CommunicartMailer.approval_reply_received_email(params, cart_report).deliver
     render json: { message: "approval_reply_received"}, status: 200
+
+    do_something_with_rejection if approve_or_reject_status == 'rejected'
+  end
+
+  def do_something_with_rejection
+    # raise 'do something here with a rejection'
+    # Set the cart to rejection
+    # Send out an email
+    # Reset everything for the next time they send a cart request
   end
 
   def approve_or_reject_status
