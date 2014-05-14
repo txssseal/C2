@@ -30,7 +30,7 @@ class CommunicartsController < ApplicationController
       approval_user = User.find_or_create_by_email_address(params["email"])
 
       Approval.create!(user_id: approval_user.id, cart_id: cart.id)
-      CommunicartMailer.cart_notification_email(params["email"],params,cart).deliver
+      CommunicartMailer.cart_notification_email(params["email"], params, cart).deliver
     end
     render json: { message: "This was a success"}, status: 200
   end
@@ -50,13 +50,18 @@ class CommunicartsController < ApplicationController
     CommunicartMailer.approval_reply_received_email(params, cart_report).deliver
     render json: { message: "approval_reply_received"}, status: 200
 
-    do_something_with_rejection if approve_or_reject_status == 'rejected'
+    perform_reject_specific_actions(params, cart) if approve_or_reject_status == 'rejected'
   end
 
-  def do_something_with_rejection
-    # raise 'do something here with a rejection'
-    # Set the cart to rejection
-    # Send out an email
+
+private
+
+  def perform_reject_specific_actions(params, cart)
+    # Send out a rejection status email to the approvers
+    cart.approvals.each do |approval|
+      CommunicartMailer.rejection_update_email(params, cart).deliver
+    end
+
     # Reset everything for the next time they send a cart request
   end
 
