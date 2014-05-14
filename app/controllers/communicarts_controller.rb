@@ -20,7 +20,6 @@ class CommunicartsController < ApplicationController
 
     if !approval_group_name.blank?
       approval_group = ApprovalGroup.find_by(name: approval_group_name)
-
       approval_group.users.each do | user |
         Approval.create!(user_id: user.id, cart_id: cart.id)
 
@@ -42,6 +41,8 @@ class CommunicartsController < ApplicationController
     Comment.create(comment_text: params['comment'].strip, cart_id: cart.id) unless params['comment'].blank?
 
     user = User.find_by(email_address: params['fromAddress'])
+
+    #CURRENT TODO: Handle carts that are in reject status and be able to tell if they are responding to an already rejected cart. Unique ID?
     approval = cart.approvals.where(user_id: user.id).first
 
     approval.update_attributes(status: approve_or_reject_status)

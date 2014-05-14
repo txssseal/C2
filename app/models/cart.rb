@@ -57,9 +57,21 @@ class Cart < ActiveRecord::Base
 
     name = !params['cartName'].blank? ? params['cartName'] : params['cartNumber']
 
-    existing_cart =  Cart.find_by(name: name)
-    if existing_cart.blank?
+    existing_pending_cart =  Cart.find_by(name: name, status: 'pending')
+
+    if existing_pending_cart.blank?
+
       cart = Cart.new(name: name, status: 'pending', external_id: params['cartNumber'])
+
+      #Copy existing approvals
+      #REFACTOR: fix this if block mess and replace duplication in communicarts_controller.rb for creating approvals
+      if last_rejected_cart = Cart.where(name: name, status: 'rejected').last
+        approval_group = last_rejected_cart.approval_group
+        approval_group.users.each do | user |
+          cart.approvals << Approval.create!(user_id: user.id)
+        end
+      end
+
 
       if !approval_group_name.blank?
         cart.approval_group = ApprovalGroup.find_by_name(params['approvalGroup'])
@@ -71,11 +83,11 @@ class Cart < ActiveRecord::Base
 
     else
 
-      cart = existing_cart
+      cart =existing_pending_cart
       cart.cart_items.destroy_all
       cart.approval_group = nil
 
-      #TODO: Refactor duplicated code
+      #REFACTOR: duplicate code
       if !approval_group_name.blank?
         cart.approval_group = ApprovalGroup.find_by_name(params['approvalGroup'])
       else
