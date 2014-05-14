@@ -16,7 +16,7 @@ class Cart < ActiveRecord::Base
   end
 
   def all_approvals_received?
-    approvals.where(status: 'approved').count == approval_group.users.count
+    approvals.where(status: 'approved').count == approvals.count
   end
 
   def create_items_csv
@@ -63,12 +63,11 @@ class Cart < ActiveRecord::Base
 
       cart = Cart.new(name: name, status: 'pending', external_id: params['cartNumber'])
 
-      #Copy existing approvals
+      #Copy existing approvals into a new set of approvals (Don't use approval groups)
       #REFACTOR: fix this if block mess and replace duplication in communicarts_controller.rb for creating approvals
       if last_rejected_cart = Cart.where(name: name, status: 'rejected').last
-        approval_group = last_rejected_cart.approval_group
-        approval_group.users.each do | user |
-          cart.approvals << Approval.create!(user_id: user.id)
+        last_rejected_cart.approvals.each do | approval |
+          cart.approvals << Approval.create!(user_id: approval.user_id)
         end
       end
 

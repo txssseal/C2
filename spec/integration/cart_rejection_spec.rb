@@ -19,6 +19,22 @@ describe 'Rejecting a cart with multiple approvers' do
       }'
     }
 
+  let(:repost_params) {
+      '{
+      "cartNumber": "10203040",
+      "category": "approvalreply",
+      "attention": "",
+      "fromAddress": "approver1@some-dot-gov.gov",
+      "gsaUserName": "",
+      "gsaUsername": null,
+      "date": "Sun, 13 Apr 2014 18:06:15 -0400",
+      "approve": null,
+      "disapprove": "APPROVE",
+      "humanResponseText": "",
+      "comment" : "This looks much better. We could definitely use 500 highlighters. Thank you!"
+      }'
+    }
+
   let(:params_request_1) {
   '{
       "cartName": "",
@@ -143,9 +159,14 @@ describe 'Rejecting a cart with multiple approvers' do
     expect(Cart.count).to eq 2
     expect(updated_cart.approvals.count).to eq 3
 
-    # A new set of emails is sent to everyone on the list
+    # A new set of emails is sent to everyone on the list (Implied, but do we change the content of the email?)
 
     # If they respond to a previous one, they get an email that it has expired and to respond to 'this one'
+    @json_repost_params = JSON.parse(repost_params)
+    post 'approval_reply_received', @json_repost_params
+    binding.pry
+    expect(updated_cart.approvals).to eq 10203040
+
 
     # Start the web interface that allows people to just do everything in a web page experience
 
