@@ -164,7 +164,6 @@ describe 'Rejecting a cart with multiple approvers' do
     # If they respond to a previous one, they get an email that it has expired and to respond to 'this one'
     @json_repost_params = JSON.parse(repost_params)
     post 'approval_reply_received', @json_repost_params
-    binding.pry
     expect(updated_cart.approvals).to eq 10203040
 
 
