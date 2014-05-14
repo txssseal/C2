@@ -5,6 +5,7 @@ class Cart < ActiveRecord::Base
   has_many :comments
   has_many :approvals
   has_one :approval_group
+  has_one :requester
 
   def update_approval_status
     return update_attributes(status: 'rejected') if has_rejection?
