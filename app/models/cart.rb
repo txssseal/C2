@@ -64,8 +64,8 @@ class Cart < ActiveRecord::Base
 
       cart = Cart.new(name: name, status: 'pending', external_id: params['cartNumber'])
 
-      #Copy existing approvals and requester into a new set of approvals (Don't use approval groups)
-      #REFACTOR: fix this if block mess and replace duplication in communicarts_controller.rb for creating approvals
+      #Copy existing approvals and requester into a new set of approvals
+      #REFACTOR
       if last_rejected_cart = Cart.where(name: name, status: 'rejected').last
         last_rejected_cart.approvals.each do | approval |
           cart.approvals << Approval.create!(user_id: approval.user_id)
@@ -105,7 +105,6 @@ class Cart < ActiveRecord::Base
     cart.save
 
 
-    #TODO: accepts_nested_attributes_for
     #TODO: save green, socio, and features information
     params['cartItems'].each do |cart_item_params|
       CartItem.create(
@@ -124,5 +123,3 @@ class Cart < ActiveRecord::Base
   end
 
 end
-
-# TODO: states: awaiting_approvals, approved, rejected
