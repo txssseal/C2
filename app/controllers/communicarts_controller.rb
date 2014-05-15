@@ -35,16 +35,14 @@ class CommunicartsController < ApplicationController
   end
 
   def approval_reply_received
-    cart = Cart.find_by(external_id: (params['cartNumber'].to_i))
+    cart = Cart.where(external_id: (params['cartNumber'].to_i)).where(status:'pending').first
     cart.decorate
 
     Comment.create(comment_text: params['comment'].strip, cart_id: cart.id) unless params['comment'].blank?
 
     user = User.find_by(email_address: params['fromAddress'])
 
-    #CURRENT TODO: Handle carts that are in reject status and be able to tell if they are responding to an already rejected cart. Unique ID?
     approval = cart.approvals.where(user_id: user.id).first
-
     approval.update_attributes(status: approve_or_reject_status)
     cart.update_approval_status
     cart_report = EmailStatusReport.new(cart)
