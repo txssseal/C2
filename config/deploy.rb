@@ -35,6 +35,7 @@ namespace :deploy do
   task :symlink_configs, :roles => :app do
     run "ln -nfs #{deploy_to}/shared/config/*.yml #{release_path}/config/"
     run "ln -nfs #{deploy_to}/shared/config/environments/#{rails_env}.rb #{release_path}/config/environments/#{rails_env}.rb"
+    run "ln -nfs #{deploy_to}/shared/config/initializers/#{rails_env}.rb #{release_path}/config/initializers/#{rails_env}.rb"
   end
 
 end
