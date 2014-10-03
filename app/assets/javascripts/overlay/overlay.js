@@ -126,8 +126,10 @@ setTimeout(function(){
 
     $('#add_btn').click(function() {
       if (doValidate()) {
+        venueUrl = qs.itemUrl.match('^.+?[^\/:](?=[?\/]|$)')[0];
+
         addCartItem($('#itemname').val(), qs.itemUrl, qs.imageUrl,
-          $('#itemprice').val(), $('#itemquantity').val(), qs.vendor);
+          $('#itemprice').val(), $('#itemquantity').val(), venueUrl, qs.vendor);
         switchToCart();
       }
     });
@@ -188,10 +190,11 @@ function loadProdImage(imageurl) {
     newImg.src = imageurl;
 }
 
-function addCartItem(title, itemUrl, imageUrl, price, quantity, vendor) {
-    var item = new CartItem({title: title, itemurl: itemUrl, imageUrl: imageUrl, price: price, quantity: quantity, vendor: vendor});
+function addCartItem(title, itemUrl, imageUrl, price, quantity, shoppingVenue, vendor) {
+    var item = new CartItem({title: title, itemurl: itemUrl, imageUrl: imageUrl, price: price, quantity: quantity, vendor: vendor, shoppingVenue: shoppingVenue});
     items.add(item);
     item.save();
+    debugger
 }
 
 function switchToCart() {
@@ -225,6 +228,7 @@ function sendCart() {
   items.each(function (item) {
     var tItem = {};
     tItem.url = item.get("itemurl");
+    // tItem.shoppingVenue = tItem.url.match('^.+?[^\/:](?=[?\/]|$)');
     tItem.imageUrl = item.get("imageUrl");
     tItem.vendor = item.get("vendor");
     tItem.details = item.get("description");
