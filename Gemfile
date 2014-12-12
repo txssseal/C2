@@ -18,6 +18,7 @@ gem 'settingslogic'
 gem 'turbolinks'
 gem 'uglifier'
 gem 'newrelic_rpm'
+gem 'mail_view'
 
 group :test, :development do
   gem 'database_cleaner'
@@ -30,7 +31,6 @@ end
 
 group :development do
   gem 'guard-rspec', require: false
-  gem 'mail_view'
   gem 'railroady'
 end
 
