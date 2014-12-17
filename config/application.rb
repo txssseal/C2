@@ -47,5 +47,7 @@ module C2
     config.exceptions_app = self.routes
 
     config.autoload_paths << Rails.root.join('lib')
+
+    config.action_mailer.asset_host = "http://localhost:3000"
   end
 end

@@ -467,7 +467,8 @@ p.approved {
 }
 
 .icon-approved {
-  background-image: image-url('icon-checkmark.gif');
+  /*background-image: image-url('icon-checkmark.gif');*/
+  background-image: ('icon-checkmark.gif');
   background-repeat: no-repeat;
   padding-left: 21px;
 }
