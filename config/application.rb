@@ -48,6 +48,5 @@ module C2
 
     config.autoload_paths << Rails.root.join('lib')
 
-    config.action_mailer.asset_host = "http://localhost:3000"
   end
 end
