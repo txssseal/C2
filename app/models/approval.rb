@@ -30,6 +30,14 @@ class Approval < ActiveRecord::Base
     )
   end
 
+  def user_full_name
+    user.full_name
+  end
+
+  def user_email_address
+    user.email_address
+  end
+
 
   private
 
