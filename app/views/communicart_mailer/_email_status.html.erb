@@ -26,11 +26,11 @@
                   <%= generate_bookend_class(index, @cart.approvals_in_list_order.count) %>
                 >
                   <%= status_icon_tag(approval.status) %>
-                  <ul>
-                    <li><%= "something" %></li>
-                    <li><%= approval.user_full_name %></li>
-                    <li><%= mail_to approval.user_email_address %></li>
-                  </ul>
+
+                    <%= "something" %>
+                    <%= approval.user_full_name %>
+                    <%= mail_to approval.user_email_address %>
+
                 </td>
               </tr>
               <%- last_status = approval.status %>
