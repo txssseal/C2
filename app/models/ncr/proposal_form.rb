@@ -54,7 +54,7 @@ module Ncr
     validates :building_number, presence: true
 
     def budget_approver_email
-      ENV['NCR_BUDGET_APPROVER_EMAIL'] || 'communicart.budget.approver@gmail.com'
+      ENV['NCR_BUDGET_APPROVER_EMAIL'] || 'ncr_ba61_budgetrequests@gsa.gov'
     end
 
     def finance_approver_email
