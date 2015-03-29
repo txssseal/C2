@@ -21,8 +21,8 @@ class CommunicartsController < ApplicationController
   def approval_response
     cart = Cart.find(params[:cart_id]).decorate
     proposal = cart.proposal
+    @token ||= ApiToken.find_by(access_token: params[:cch])
     approval = cart.approvals.find_by(user_id: user_id)
-    @token ||= ApiToken.find_by(approval_id: approval.id)
 
     if !approval
       flash[:error] = "Sorry, you're not an approver on #{proposal.public_identifier}."
