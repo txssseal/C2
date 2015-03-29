@@ -7,6 +7,7 @@ module Ncr
       :emergency,
       :expense_type,
       :id,
+      :name,
       :not_to_exceed,
       :office,
       :rwa_number,
